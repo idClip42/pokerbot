@@ -20,6 +20,7 @@ exports = module.exports = (function(){
         this._totalHandBet = 0;
         this._folded = false;
         this._allIn = false;
+        this._maxEligiblePot = 0;
 
         // this._evaluator = new PokerEvaluator();
 
@@ -32,6 +33,7 @@ exports = module.exports = (function(){
     Player.prototype.TotalHandBet = function(){ return this._totalHandBet; };
     Player.prototype.Hand = function(){ return this._hand; };
     Player.prototype.Funds = function(){ return this._funds; };
+    Player.prototype.MaxEligiblePot = function(){ return this._maxEligiblePot; };
 
     /**
      * Gives the player some money
@@ -147,6 +149,25 @@ exports = module.exports = (function(){
         this._totalHandBet += this._currentBet;
         console.log(`${this._uid} has bet $${this._totalHandBet} this hand`);
         return this._currentBet;
+    };
+
+    Player.prototype.AddEveryonesBets = function(betsArray){
+
+        // TODO: This doesn't work for the extended first round of betting
+
+        // If we folded, we're not eligible for anything
+        if(this._folded){
+            this._maxEligiblePot = 0;
+            return;
+        }
+
+        // For each bet placed this round
+        for(let bet of betsArray){
+            // Adds either the bet the other person made to our max eligible money
+            // or only the amt we put in (if we went all-in)
+            this._maxEligiblePot += Math.min(this._currentBet, bet);
+        }
+
     };
 
     Player.prototype.toString = function(){

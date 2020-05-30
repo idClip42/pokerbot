@@ -227,33 +227,8 @@ exports = module.exports = (function(){
             this._pot += player.SubmitCurrentBet();
         }
         console.log(`Current pot: $${this._pot}`);
-
-        let winningPlayer = undefined;
-        let winningValue = 0;
-        let winningHand = "";
-
-        for(let player of this._players){
-            let evaluation = EvalHand(
-                player.Hand(),
-                this._communityCards
-                );
-
-            if(evaluation.value > winningValue){
-                winningValue = evaluation.value;
-                winningPlayer = player;
-                winningHand = evaluation.handName;
-            }
-        }
-
-        if(!winningPlayer){
-            throw new Error("Winning player is somehow " + winningPlayer);
-        }
-
-        console.log(`The winner is... ${winningPlayer.toString()}!`);
-        console.log(`${winningPlayer.toString()} wins $${this._pot}`);
-
-        console.log(`Transferring pot to ${winningPlayer.toString()}`)
-        winningPlayer.AddFunds(this._pot);
+        
+        DistributeWinnings(this._players, this._communityCards, this._pot);
 
         console.log("Emptying pot");
         this._pot = 0;
@@ -305,6 +280,101 @@ exports = module.exports = (function(){
                 // Reset offset index
                 indexOffset = 0;
             }
+        }
+
+        // Lets everyone know about everyone's bets
+        // Used for tracking max possible winnings, and therefore side pots
+        let playerBets = [];
+        for(let player of this._players){
+            playerBets.push(player.CurrentBet());
+        }
+        for(let player of this._players){
+            player.AddEveryonesBets(playerBets);
+        }
+    };
+
+
+    const DistributeWinnings = function(allPlayers, communityCards, pot){
+
+        // TODO: SPLIT POT
+
+        let potAmounts = [];
+
+        for(let player of allPlayers){
+
+            // Makes sure only non-folding players are part of this
+            if(player.HasFolded()) {
+                console.log(`${player.toString()} has folded and is not eligible for any winnings`);
+                continue;
+            }
+
+            // Adds the amt the player are eligible for to the array of possibilities
+            // Usually, this array will only hold one value - everyone bet the same
+            // (And anyone who folded hasn't made it this far in the code)
+            // Sometimes people will go all in,
+            // so we'll have multiple values and resulting side pots
+            if(!potAmounts.includes(player.MaxEligiblePot())){
+                potAmounts.push(player.MaxEligiblePot());
+                console.log(`Adding $${player.MaxEligiblePot()} to eligible pots`);
+            }
+
+        }
+
+        // Sorts our pot amounts in ascending order
+        potAmounts.sort(function(a,b){
+            return parseInt(a) - parseInt(b);
+        });
+        console.log(`Sorted pots: ${potAmounts}`);
+
+        // Keeps track of how much money we've removed from the pot thus far
+        let amountTakenFromPot = 0;
+        // Goes through each pot
+        for(let pot of potAmounts){
+            
+            console.log(`Finding winner for $${pot} pot`);
+
+            // Only allows eligible players to partake in the pot
+            let eligiblePlayers = [];
+            for(let player of allPlayers){
+                if(player.MaxEligiblePot() >= pot){
+                    console.log(` - ${player.toString()} ($${player.MaxEligiblePot()} max) is eligible`);
+                    eligiblePlayers.push(player);
+                } else {
+                    console.log(` - ${player.toString()} ($${player.MaxEligiblePot()} max) is NOT eligible`);
+                }
+            }
+
+            // Removes previously rewarded money from this sum
+            // So that we aren't making money out of thin air
+            pot -= amountTakenFromPot;
+            console.log(`Remaining pot: $${pot}`);
+
+            let winningPlayer = undefined;
+            let winningValue = 0;
+            let winningHand = "";
+            for(let player of allPlayers){
+                let evaluation = EvalHand(
+                    player.Hand(),
+                    communityCards
+                    );
+                if(evaluation.value > winningValue){
+                    winningValue = evaluation.value;
+                    winningPlayer = player;
+                    winningHand = evaluation.handName;
+                }
+                console.log(`${player} has a \"${evaluation.handName}\"`);
+            }
+            if(!winningPlayer){
+                throw new Error("Winning player is somehow " + winningPlayer);
+            }
+
+            console.log(`${winningPlayer} wins $${pot}`);
+            winningPlayer.AddFunds(pot);
+
+            // Updates the amount taken from the pot
+            // So that we aren't making money out of thin air
+            amountTakenFromPot += pot;
+            console.log(`Amount taken from pot thus far: ${amountTakenFromPot}`);
         }
     };
 
