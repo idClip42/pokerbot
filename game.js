@@ -296,8 +296,6 @@ exports = module.exports = (function(){
 
     const DistributeWinnings = function(allPlayers, communityCards, pot){
 
-        // TODO: SPLIT POT
-
         let potAmounts = [];
 
         for(let player of allPlayers){
@@ -349,7 +347,9 @@ exports = module.exports = (function(){
             pot -= amountTakenFromPot;
             console.log(`Remaining pot: $${pot}`);
 
-            let winningPlayer = undefined;
+            // Setting player as an array
+            // because there may be more than one with the same hand
+            let winningPlayers = [];
             let winningValue = 0;
             let winningHand = "";
             for(let player of allPlayers){
@@ -359,17 +359,31 @@ exports = module.exports = (function(){
                     );
                 if(evaluation.value > winningValue){
                     winningValue = evaluation.value;
-                    winningPlayer = player;
+                    winningPlayers = [ player ];
                     winningHand = evaluation.handName;
                 }
+                
+                // If we have two people with the same hand
+                // we add the second one to the existing array
+                else if(evaluation.value === winningValue){
+                    winningPlayers.push(player);
+                }
+
                 console.log(`${player} has a \"${evaluation.handName}\"`);
             }
-            if(!winningPlayer){
-                throw new Error("Winning player is somehow " + winningPlayer);
+            if(winningPlayers.length === 0){
+                throw new Error("No winning players!");
             }
 
-            console.log(`${winningPlayer} wins $${pot}`);
-            winningPlayer.AddFunds(pot);
+            if(winningPlayers.length > 1){
+                console.log(`Tie! Winners are ${winningPlayers}`);
+            }
+
+            let money = pot / winningPlayers.length;
+            for(let winner of winningPlayers){
+                console.log(`${winner} wins $${money}`);
+                winner.AddFunds(money);
+            }
 
             // Updates the amount taken from the pot
             // So that we aren't making money out of thin air
