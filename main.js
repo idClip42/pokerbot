@@ -27,4 +27,8 @@ const game = new Game();
 for(let player of players)
     game.PlayerAdd(player);
 
-game.NewHand();
+let gameEnded = false;
+while(gameEnded === false){
+    gameEnded = game.NewHand();
+}
+console.log("Game is over");

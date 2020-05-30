@@ -37,6 +37,9 @@ exports = module.exports = (function(){
         this._pot = 0;
         this._currentBet = 0;
 
+        this._totalMoney = 0;
+        this._handsPlayed = 0;
+
         // this._evaluator = new PokerEvaluator();
 
         Object.seal(this);
@@ -72,6 +75,9 @@ exports = module.exports = (function(){
         console.log("Adding player: " + newPlayer);
         this._players.push(newPlayer);
         console.log("Updated Players: " + this._players);
+
+        this._totalMoney += newPlayer.Funds();
+        console.log("Total money at the table is now $" + this._totalMoney);
     };
 
     /**
@@ -99,6 +105,8 @@ exports = module.exports = (function(){
     Game.prototype.NewHand = function(){
 
         console.log("Starting new hand");
+
+        this._handsPlayed++;
 
         console.log("Clearing community cards");
         this._communityCards = [];
@@ -259,6 +267,15 @@ exports = module.exports = (function(){
             console.log(`${this._players[0].toString()} is the winner!`);
             return true;
         }
+
+        // Check if the money everyone has still adds up!
+        let totalMoney = 0;
+        for(let player of this._players)
+            totalMoney += player.Funds();
+        if(totalMoney !== this._totalMoney){
+            throw new Error(`$${totalMoney - this._totalMoney} extra dollars at the table! (Hand ${this._handsPlayed})`);
+        }
+
         return false;
     };
 
