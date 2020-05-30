@@ -134,7 +134,13 @@ exports = module.exports = (function(){
 
         console.log(`${this._uid} is betting...`);
 
-        this._currentBet = Math.min(game.CurrentBet(), this._funds);
+        if(this._currentBet === game.CurrentBet() && this._currentBet !== 0){
+            console.log(`This guy, ${this._uid}, is the big blind man`);
+            console.log("And he's gonna raise! Or try to.");
+            this._currentBet = Math.min(game.CurrentBet() * 2, this._funds);
+        } else {
+            this._currentBet = Math.min(game.CurrentBet(), this._funds);
+        }
         console.log(`${this._uid} bets $${this._currentBet}`);
         return this._currentBet;
     };

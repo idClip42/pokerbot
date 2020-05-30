@@ -130,7 +130,7 @@ exports = module.exports = (function(){
         startPlayerIndex++;
         startPlayerIndex %= this._players.length;
         this._players[startPlayerIndex].BetBlind(CONFIG.betting.smallBlind);
-        console.log(this._players[startPlayerIndex] + " bet the small blind, " + this._players[startPlayerIndex].CurrentBet());
+        console.log(this._players[startPlayerIndex] + " bet the small blind, $" + this._players[startPlayerIndex].CurrentBet());
         // Notes who did the small blind - they start the betting in subsequent rounds
         let smallBlindPlayerIndex = startPlayerIndex;
         
@@ -139,7 +139,7 @@ exports = module.exports = (function(){
         startPlayerIndex++;
         startPlayerIndex %= this._players.length;
         this._players[startPlayerIndex].BetBlind(CONFIG.betting.bigBlind);
-        console.log(this._players[startPlayerIndex] + " bet the big blind, " + this._players[startPlayerIndex].CurrentBet());
+        console.log(this._players[startPlayerIndex] + " bet the big blind, $" + this._players[startPlayerIndex].CurrentBet());
         // Notes who did the big blind - they get a final check
         let  bigBlindPlayerIndex = startPlayerIndex;
 
@@ -151,22 +151,22 @@ exports = module.exports = (function(){
         startPlayerIndex %= this._players.length;
 
         // Start the betting round
-        BettingRound.call(this, startPlayerIndex);
+        BettingRound.call(this, startPlayerIndex, true);
 
-        let bigBlindPlayer = this._players[bigBlindPlayerIndex];
-        // If no one raised
-        if(this._currentBet === CONFIG.betting.bigBlind){
-            console.log(`Giving big blind player ${bigBlindPlayer.toString()} chance to check or raise`);
-            let bbFinalBet = bigBlindPlayer.Bet(this);
-            if(bbFinalBet > CONFIG.betting.bigBlind){
-                console.log(`Big blind player ${bigBlindPlayer} raised, so we do another round of betting`);
-                BettingRound.call(this, bigBlindPlayerIndex + 1);
-            } else {
-                console.log(`Big blind player ${bigBlindPlayer} checked`);
-            }
-        } else {
-            console.log(`Not giving big blind player ${bigBlindPlayer.toString()} chance to check or raise`);
-        }
+        // let bigBlindPlayer = this._players[bigBlindPlayerIndex];
+        // // If no one raised
+        // if(this._currentBet === CONFIG.betting.bigBlind){
+        //     console.log(`Giving big blind player ${bigBlindPlayer.toString()} chance to check or raise`);
+        //     let bbFinalBet = bigBlindPlayer.Bet(this);
+        //     if(bbFinalBet > CONFIG.betting.bigBlind){
+        //         console.log(`Big blind player ${bigBlindPlayer} raised, so we do another round of betting`);
+        //         BettingRound.call(this, bigBlindPlayerIndex + 1);
+        //     } else {
+        //         console.log(`Big blind player ${bigBlindPlayer} checked`);
+        //     }
+        // } else {
+        //     console.log(`Not giving big blind player ${bigBlindPlayer.toString()} chance to check or raise`);
+        // }
 
         console.log("Collecting bets");
         for(let player of this._players){
@@ -262,7 +262,14 @@ exports = module.exports = (function(){
         return false;
     };
 
-    const BettingRound = function(startPlayerIndex){
+    const BettingRound = function(startPlayerIndex /*, isBlinds = false*/ ){
+
+        // let loopLength = this._players.length;
+
+        // if(bigBlindPlayer > -1){
+        //     console.log("If there are no raises, big blind player gets ");
+        // }
+
         console.log("Starting the betting round");
         for(let indexOffset = 0; indexOffset < this._players.length; ++indexOffset){
             // Gets our current player index
@@ -279,6 +286,8 @@ exports = module.exports = (function(){
                 startPlayerIndex = currentIndex;
                 // Reset offset index
                 indexOffset = 0;
+                // // In the case where we were going to let 
+                // let loopLength = this._players.length;
             }
         }
 
