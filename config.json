@@ -1,0 +1,13 @@
+{
+    "betting" : {
+        "smallBlind" : 1000,
+        "bigBlind" : 2000,
+        "buyIn" : 200000
+    },
+    "hand" : {
+        "holeCards" : 2
+    },
+    "logic" : {
+        "evalIterations" : 1000
+    }
+}
