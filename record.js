@@ -1,9 +1,39 @@
 exports = module.exports = (function(){
 
     const fs = require("fs");
+    const path = require("path");
+
+    const FILENAME = "statsRecord.json";
+    const PATH = path.join(__dirname, FILENAME)
+
+    const MultiplierPercRecord = function(perc){
+        this.choiceLikelihood = perc;
+        this.games = 0;
+        this.wins = 0;
+        this.losses = 0;
+        this.winPercentage = 0;
+        Object.seal(this);
+    };
+
+    const TableState = function(){
+        // Each array:
+        // - Index is the blind multiplier
+        // - Value is an object
+        //   - Keys are percentages
+        //   - Values are MultiplierPercRecord object
+        this["2Cards"] = [];
+        this["5Cards"] = [];
+        this["6Cards"] = [];
+        this["7Cards"] = [];
+        Object.seal(this);
+    };
 
     const Record = function(){
         console.log("Initializing Record");
+
+        // Set of TableStates
+        // Keys are player counts
+        this.playerCounts = {};
 
         Object.seal(this);
     };
@@ -11,11 +41,25 @@ exports = module.exports = (function(){
     Record.prototype.Load = function(){
         console.log("Loading Record");
 
+        if(!fs.existsSync(PATH)){
+            console.log("File doesn't exist yet");
+            return;
+        }
+
+        let dataString = fs.readFileSync(PATH, "utf-8");
+        let dataObj = JSON.parse(dataString);
+
+        Object.assign(this, dataObj);
+        console.log(this);
     };
 
     Record.prototype.Save = function(){
         console.log("Saving Record");
 
+        fs.writeFileSync(
+            PATH,
+            JSON.stringify(this, null, 4)
+        );
     };
 
     /**
@@ -24,8 +68,41 @@ exports = module.exports = (function(){
      * @param {number} playerCount How many players in the game
      * @param {boolean} didWin Whether this player won
      */
-    Record.prototype.AddPlayerLogicResults = function(logic, playerCount,didWin ){
+    Record.prototype.AddPlayerLogicResults = function(logic, playerCount, didWin ){
         
+        if(!this.playerCounts.hasOwnProperty(playerCount))
+            this.playerCounts[playerCount] = new TableState();
+
+        let table = this.playerCounts[playerCount];
+
+        for(let tableStateString in logic.bettingLikelihood){
+            let relevantMultObjArray = table[tableStateString];
+            
+            for(let multIndex in logic.bettingLikelihood[tableStateString]){
+
+                if(relevantMultObjArray[multIndex] === undefined){
+                    relevantMultObjArray[multIndex] = {};
+                }
+
+                percToDataObj = relevantMultObjArray[multIndex];
+
+                // TODO: Sort the percentage keys
+
+                let percentage = logic.bettingLikelihood[tableStateString][multIndex];
+
+                if(!percToDataObj.hasOwnProperty(percentage)){
+                    percToDataObj[percentage] = new MultiplierPercRecord(percentage);
+                }
+
+                let thisRecord = percToDataObj[percentage];
+                thisRecord.games++;
+                if(didWin) thisRecord.wins++;
+                else thisRecord.losses++;
+                thisRecord.winPercentage = thisRecord.wins / thisRecord.games;
+
+            }
+        }
+
     };
 
     return Record;

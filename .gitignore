@@ -1,3 +1,7 @@
+# App-specific
+statsRecord.json
+
+
 # Logs
 logs
 *.log
