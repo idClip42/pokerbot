@@ -22,7 +22,10 @@ const PLAYER_NAMES = [
 
 const record = new Record();
 record.Load();
-record.EvaluateBestStrategy();
+
+if(CONFIG.logging.logEval === true){
+    record.EvaluateBestStrategy();
+}
 
 while(true){
 
@@ -76,7 +79,9 @@ while(true){
         record.AddPlayerLogicResults(logic, playerCount, won);
     }
 
-    record.EvaluateBestStrategy();
+    if(CONFIG.logging.logEval === true){
+        record.EvaluateBestStrategy();
+    }
 
     record.Save();
 }

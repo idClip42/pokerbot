@@ -13,6 +13,7 @@
         "discretePercOptions" : 20
     },
     "logging" : {
-        "enabled" : false
+        "enabled" : false,
+        "logEval" : true
     }
 }
