@@ -54,10 +54,10 @@ exports = module.exports = (function(){
      */
     const Deck = function(cardIdsToOmit = []){
 
-        console.log("Generating new deck");
+        // console.log("Generating new deck");
 
         if(cardIdsToOmit.length > 0){
-            console.log("Omitting cards: " + cardIdsToOmit);
+            // console.log("Omitting cards: " + cardIdsToOmit);
         }
 
         this._allCards = [];
@@ -72,10 +72,10 @@ exports = module.exports = (function(){
                 this._allCards.push(card);
             }
         }
-        console.log("Generating " + this._allCards.length + " cards");
+        // console.log("Generating " + this._allCards.length + " cards");
 
         this._deckObj = new CardDeck();
-        console.log("Deck created");
+        // console.log("Deck created");
 
         Object.freeze();
     };

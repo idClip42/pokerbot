@@ -4,6 +4,9 @@ const Game = require("./game.js");
 const Player = require("./player.js");
 const CONFIG = require("./config.json");
 
+for(let n = 0; n < 5; ++n)
+    console.log("---------------------------------------------------------------------------------------------------------------");
+
 const PLAYER_NAMES = [
     "Arty",
     "Barb",
@@ -19,9 +22,6 @@ for(let name of PLAYER_NAMES){
         CONFIG.betting.buyIn
     ));
 }
-
-console.log("Players:");
-console.log(players);
 
 const game = new Game();
 for(let player of players)

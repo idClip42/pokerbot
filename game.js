@@ -27,7 +27,7 @@ exports = module.exports = (function(){
      * The constructor for the Game itself
      */
     const Game = function(){
-        console.log("Initializing New Game");
+        // console.log("\nInitializing New Game");
 
         this._players = [];
         this._cardDeck = new Deck();
@@ -72,12 +72,12 @@ exports = module.exports = (function(){
      */
     Game.prototype.PlayerAdd = function(newPlayer){
         if(!CheckPlayer(newPlayer)) return;
-        console.log("Adding player: " + newPlayer);
+        // console.log("Adding player: " + newPlayer);
         this._players.push(newPlayer);
-        console.log("Updated Players: " + this._players);
+        // console.log("Updated Players: " + this._players);
 
         this._totalMoney += newPlayer.Funds();
-        console.log("Total money at the table is now $" + this._totalMoney);
+        // console.log("Total money at the table is now $" + this._totalMoney);
     };
 
     /**
@@ -104,26 +104,27 @@ exports = module.exports = (function(){
      */
     Game.prototype.NewHand = function(){
 
-        console.log("Starting new hand");
+        console.log("\n\n\nStarting new hand");
 
         this._handsPlayed++;
 
-        console.log("Clearing community cards");
+        // console.log("Clearing community cards");
         this._communityCards = [];
 
-        console.log("Reshuffling Deck");
+        // console.log("Reshuffling Deck");
         this._cardDeck.Reshuffle();
 
-        console.log("Dealing hole cards");
+        console.log("\nDealing Hole Cards:");
         for(let player of this._players){
             player.RemoveHand();
             let newHand = [];
             for(let n = 0; n < CONFIG.hand.holeCards; ++n)
                 newHand.push(this._cardDeck.Draw());
             player.SetHand(newHand);
+            console.log(` - ${player.toString()}: ${newHand}`);
         }
 
-        console.log("Incrementing dealer");
+        // console.log("Incrementing dealer");
         this._dealerIndex++;
         this._dealerIndex %= this._players.length;
 
@@ -133,6 +134,8 @@ exports = module.exports = (function(){
         for(let player of this._players){
             player.NewBettingRound();
         }
+
+        console.log("");
 
         // First, the small blind
         startPlayerIndex++;
@@ -149,7 +152,7 @@ exports = module.exports = (function(){
         this._players[startPlayerIndex].BetBlind(CONFIG.betting.bigBlind);
         console.log(this._players[startPlayerIndex] + " bet the big blind, $" + this._players[startPlayerIndex].CurrentBet());
         // Notes who did the big blind - they get a final check
-        let  bigBlindPlayerIndex = startPlayerIndex;
+        let bigBlindPlayerIndex = startPlayerIndex;
 
         // Sets up our big blind as our current bet
         this._currentBet = CONFIG.betting.bigBlind;
@@ -176,61 +179,61 @@ exports = module.exports = (function(){
         //     console.log(`Not giving big blind player ${bigBlindPlayer.toString()} chance to check or raise`);
         // }
 
-        console.log("Collecting bets");
+        // console.log("Collecting bets");
         for(let player of this._players){
             this._pot += player.SubmitCurrentBet();
         }
         console.log(`Current pot: $${this._pot}`);
 
 
-        console.log("Dealing the flop...");
+        console.log("\nDealing the flop...");
         for(let n = 0; n < 3; ++n){
             this._communityCards.push(this._cardDeck.Draw());
         }
         console.log(this._communityCards);
 
-        console.log("Starting Betting Round 2");
+        // console.log("Starting Betting Round 2");
         // Sets everyone up for new betting rounds
         for(let player of this._players){
             player.NewBettingRound();
         }
         this._currentBet = 0;
         BettingRound.call(this, smallBlindPlayerIndex);
-        console.log("Collecting bets");
+        // console.log("Collecting bets");
         for(let player of this._players){
             this._pot += player.SubmitCurrentBet();
         }
         console.log(`Current pot: $${this._pot}`);
 
-        console.log("Dealing the turn...");
+        console.log("\nDealing the turn...");
         this._communityCards.push(this._cardDeck.Draw());
         console.log(this._communityCards);
 
-        console.log("Starting Betting Round 3");
+        // console.log("Starting Betting Round 3");
         // Sets everyone up for new betting rounds
         for(let player of this._players){
             player.NewBettingRound();
         }
         this._currentBet = 0;
         BettingRound.call(this, smallBlindPlayerIndex);
-        console.log("Collecting bets");
+        // console.log("Collecting bets");
         for(let player of this._players){
             this._pot += player.SubmitCurrentBet();
         }
         console.log(`Current pot: $${this._pot}`);
 
-        console.log("Dealing the river...");
+        console.log("\nDealing the river...");
         this._communityCards.push(this._cardDeck.Draw());
         console.log(this._communityCards);
 
-        console.log("Starting Betting Round 4");
+        // console.log("Starting Betting Round 4");
         // Sets everyone up for new betting rounds
         for(let player of this._players){
             player.NewBettingRound();
         }
         this._currentBet = 0;
         BettingRound.call(this, smallBlindPlayerIndex);
-        console.log("Collecting bets");
+        // console.log("Collecting bets");
         for(let player of this._players){
             this._pot += player.SubmitCurrentBet();
         }
@@ -238,13 +241,13 @@ exports = module.exports = (function(){
         
         DistributeWinnings(this._players, this._communityCards, this._pot);
 
-        console.log("Emptying pot");
+        // console.log("Emptying pot");
         this._pot = 0;
 
         let bustedOut = [];
-        console.log("Current Balances:");
+        console.log("\nCurrent Balances:");
         for(let player of this._players){
-            console.log(`${player.toString()}:\t$${player.Funds()}`);
+            console.log(` - ${player.toString()}:\t$${player.Funds()}`);
             if(player.Funds() <= 0){
                 bustedOut.push(player);
             }
@@ -255,10 +258,10 @@ exports = module.exports = (function(){
             this._players.splice(this._players.indexOf(player), 1);
         }
 
-        console.log("Remaining Players:");
-        for(let player of this._players){
-            console.log(" - " + player.toString());
-        }
+        // console.log("Remaining Players:");
+        // for(let player of this._players){
+        //     console.log(" - " + player.toString());
+        // }
 
         if(this._players.length === 0){
             throw new Error("How did we manage to end with no players???");
@@ -287,7 +290,7 @@ exports = module.exports = (function(){
         //     console.log("If there are no raises, big blind player gets ");
         // }
 
-        console.log("Starting the betting round");
+        // console.log("Starting the betting round");
         for(let indexOffset = 0; indexOffset < this._players.length; ++indexOffset){
             // Gets our current player index
             let currentIndex = (startPlayerIndex + indexOffset) % this._players.length;
@@ -322,6 +325,8 @@ exports = module.exports = (function(){
 
     const DistributeWinnings = function(allPlayers, communityCards, pot){
 
+        console.log("");
+
         let potAmounts = [];
 
         for(let player of allPlayers){
@@ -355,7 +360,7 @@ exports = module.exports = (function(){
         // Goes through each pot
         for(let pot of potAmounts){
             
-            console.log(`Finding winner for $${pot} pot`);
+            console.log(`\nFinding winner for $${pot} pot`);
 
             // Only allows eligible players to partake in the pot
             let eligiblePlayers = [];

@@ -2,7 +2,6 @@
 
 exports = module.exports = (function(){
 
-    // const PokerEvaluator = require("poker-evaluator-ts").PokerEvaluator;
     const EvaluateWinProbability = require("./winProbability.js");
 
     /**
@@ -11,7 +10,7 @@ exports = module.exports = (function(){
      * @param {float} funds How much money they have
      */
     const Player = function(uid, funds){
-        console.log("Initializing new player: " + uid);
+        console.log("Initializing new player: " + uid + ", $" + funds);
 
         this._uid = uid;
         this._funds = funds;
@@ -21,8 +20,6 @@ exports = module.exports = (function(){
         this._folded = false;
         this._allIn = false;
         this._maxEligiblePot = 0;
-
-        // this._evaluator = new PokerEvaluator();
 
         Object.seal(this);
     };
@@ -40,7 +37,7 @@ exports = module.exports = (function(){
      * @param {int} amt How much money to give
      */
     Player.prototype.AddFunds = function(amt){
-        console.log(this._uid + " gains $" + amt);
+        // console.log(this._uid + " gains $" + amt);
         this._funds += amt;
     };
 
@@ -49,7 +46,7 @@ exports = module.exports = (function(){
      * @param {int} amt How much money to take
      */
     Player.prototype.RemoveFunds = function(amt){
-        console.log(this._uid + " loses $" + amt);
+        // console.log(this._uid + " loses $" + amt);
         this._funds -= amt;
     };
 
@@ -58,8 +55,8 @@ exports = module.exports = (function(){
      * @param {array} cards Array of card objects
      */
     Player.prototype.SetHand = function(cards){
-        console.log(`${this._uid} got new hole cards`);
-        console.log(cards);
+        // console.log(`${this._uid} got new hole cards: ${cards}`);
+        // console.log(" - ");
         this._hand = cards;
     };
 
@@ -67,7 +64,7 @@ exports = module.exports = (function(){
      * Removes cards from the players hand
      */
     Player.prototype.RemoveHand = function(){
-        console.log(`${this._uid}'s hand removed.`);
+        // console.log(`${this._uid}'s hand removed.`);
         this._hand = [];
     };
 
@@ -76,12 +73,12 @@ exports = module.exports = (function(){
         this._folded = false;
         this._allIn = false;
         this._totalHandBet = 0;
-        console.log(`${this._uid} is starting a new hand`);
+        // console.log(`${this._uid} is starting a new hand`);
     };
 
     Player.prototype.NewBettingRound = function(){
         this._currentBet = 0;
-        console.log(`${this._uid} is starting a new betting round`);
+        // console.log(`${this._uid} is starting a new betting round`);
     };
 
     /**
@@ -107,7 +104,7 @@ exports = module.exports = (function(){
 
         if(!game) throw new Error("Didn't pass in game object");
 
-        console.log(`${this._uid}'s turn to bet`);
+        // console.log(`${this._uid}'s turn to bet`);
         if(this._folded === true) {
             console.log(`${this._uid} already folded`);
             return;
@@ -126,17 +123,17 @@ exports = module.exports = (function(){
             activePlayerCount++;
         }
         
+        console.log(`\n${this._uid} evaluating likelihood of victory:`);
         let winPerc = EvaluateWinProbability(
             this._hand,
             game.CommunityCards(),
             activePlayerCount
         );
 
-        console.log(`${this._uid} is betting...`);
+        // console.log(`${this._uid} is betting...`);
 
         if(this._currentBet === game.CurrentBet() && this._currentBet !== 0){
-            console.log(`This guy, ${this._uid}, is the big blind man`);
-            console.log("And he's gonna raise! Or try to.");
+            console.log(`This guy, ${this._uid}, is the big blind man, so he's going to arbitrarily raise for now`);
             this._currentBet = Math.min(game.CurrentBet() * 2, this._funds);
         } else {
             this._currentBet = Math.min(game.CurrentBet(), this._funds);
@@ -151,9 +148,9 @@ exports = module.exports = (function(){
     Player.prototype.SubmitCurrentBet = function(){
         this._funds -= this._currentBet;
         if(this._funds === 0) this._allIn = true;
-        console.log(`${this._uid} is moving $${this._currentBet} into the pot`);
+        // console.log(`${this._uid} is moving $${this._currentBet} into the pot`);
         this._totalHandBet += this._currentBet;
-        console.log(`${this._uid} has bet $${this._totalHandBet} this hand`);
+        // console.log(`${this._uid} has bet $${this._totalHandBet} this hand`);
         return this._currentBet;
     };
 

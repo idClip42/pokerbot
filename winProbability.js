@@ -14,10 +14,10 @@ exports = module.exports = (function(){
 
     const EvaluateWinProbability = function(holeCards, communityCards, totalActivePlayerCount){
         
-        console.log("Evaluating likelihood of victory...");
-        console.log("Hole Cards: " + holeCards);
-        console.log("Community Cards: " + communityCards);
-        console.log("Active Players: " + totalActivePlayerCount);
+        // console.log("\nEvaluating likelihood of victory...");
+        console.log(" - Hole Cards: " + holeCards);
+        console.log(" - Community Cards: " + communityCards);
+        console.log(" - Active Players: " + totalActivePlayerCount);
 
         // We collect our currently drawn cards
         // so we can omit them from our sim deck
@@ -34,7 +34,7 @@ exports = module.exports = (function(){
         let wins = 0;
         let losses = 0;
 
-        console.log("Beginning simulation...");
+        // console.log("Beginning simulation...");
         let startBigInt = process.hrtime.bigint();
 
 
@@ -99,13 +99,15 @@ exports = module.exports = (function(){
             // console.log(`Sim took ${ns}ns`);
             return (ns / bigIntNsMs);
         })();
-        console.log(`Sim took ${msSpan}ms`);
+        console.log("\nSim:");
 
-        console.log("Wins: " + wins);
-        console.log("Losses: " + losses);
+        console.log(` - ${msSpan}ms`);
+
+        console.log(" - Wins: " + wins);
+        console.log(" - Losses: " + losses);
 
         let winPerc = wins / (wins + losses);
-        console.log("Win Percentage: " + (winPerc * 100) + "%");
+        console.log(" - Win Percentage: " + (winPerc * 100) + "%");
 
         return winPerc;
     };
