@@ -297,12 +297,23 @@ exports = module.exports = (function(){
     };
 
     const CheckTotalMoney = function(){
+        // Used for checking approximate equality
+        const EPSILON = 0.001;
+
         // Check if the money everyone has still adds up!
+        // Starts at 0
         let totalMoney = 0;
+
+        // Adds the current pot
         totalMoney += this._pot;
+
+        //Add player funds
         for(let player of this._players)
             totalMoney += player.Funds();
-        if(totalMoney !== this._totalMoney){
+
+        // If we have a difference greater than a ny floating point rounding error
+        if(Math.abs(totalMoney - this._totalMoney) > EPSILON){
+            // We throw an error
             throw new Error(`$${totalMoney - this._totalMoney} extra dollars at the table! (Hand ${this._handsPlayed})`);
         }
     };
