@@ -1,6 +1,7 @@
 exports = module.exports = (function(){
 
     const PokerEvaluator = new (require("poker-evaluator-ts").PokerEvaluator)();
+    const Log = require("./logs.js");
 
     const EvalHand = function(holeCards, communityCards){
 
@@ -11,7 +12,7 @@ exports = module.exports = (function(){
             readableHand.push(card.id);
 
         let score = PokerEvaluator.evalHand(readableHand);
-        // console.log(score);
+        // Log(score);
 
         return score;
     }

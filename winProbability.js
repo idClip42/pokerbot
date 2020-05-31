@@ -6,6 +6,7 @@ exports = module.exports = (function(){
 
     const CONFIG = require("./config.json");
     const Deck = require("./deck.js");
+    const Log = require("./logs.js");
 
     // const PokerEvaluator = new (require("poker-evaluator-ts").PokerEvaluator)();
     const EvalHand = require("./evalHand.js");
@@ -14,10 +15,10 @@ exports = module.exports = (function(){
 
     const EvaluateWinProbability = function(holeCards, communityCards, totalActivePlayerCount){
         
-        // console.log("\nEvaluating likelihood of victory...");
-        console.log(" - Hole Cards: " + holeCards);
-        console.log(" - Community Cards: " + communityCards);
-        console.log(" - Active Players: " + totalActivePlayerCount);
+        // Log("\nEvaluating likelihood of victory...");
+        Log(" - Hole Cards: " + holeCards);
+        Log(" - Community Cards: " + communityCards);
+        Log(" - Active Players: " + totalActivePlayerCount);
 
         // We collect our currently drawn cards
         // so we can omit them from our sim deck
@@ -34,7 +35,7 @@ exports = module.exports = (function(){
         let wins = 0;
         let losses = 0;
 
-        // console.log("Beginning simulation...");
+        // Log("Beginning simulation...");
         let startBigInt = process.hrtime.bigint();
 
 
@@ -96,18 +97,18 @@ exports = module.exports = (function(){
         let endBigInt = process.hrtime.bigint();
         let msSpan = (function(){
             let ns = endBigInt - startBigInt;
-            // console.log(`Sim took ${ns}ns`);
+            // Log(`Sim took ${ns}ns`);
             return (ns / bigIntNsMs);
         })();
-        console.log("\nSim:");
+        Log("\nSim:");
 
-        console.log(` - ${msSpan}ms`);
+        Log(` - ${msSpan}ms`);
 
-        console.log(" - Wins: " + wins);
-        console.log(" - Losses: " + losses);
+        Log(" - Wins: " + wins);
+        Log(" - Losses: " + losses);
 
         let winPerc = wins / (wins + losses);
-        console.log(" - Win Percentage: " + (winPerc * 100) + "%");
+        Log(" - Win Percentage: " + (winPerc * 100) + "%");
 
         return winPerc;
     };
@@ -121,7 +122,7 @@ exports = module.exports = (function(){
     //         readableHand.push(card.id);
 
     //     let score = PokerEvaluator.evalHand(readableHand);
-    //     // console.log(score);
+    //     // Log(score);
 
     //     return score.value;
     // }

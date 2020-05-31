@@ -3,6 +3,7 @@
 exports = module.exports = (function(){
 
     const CardDeck = require("card-deck");
+    const Log = require("./logs.js");
 
     const ranksList = [
         "2",
@@ -54,10 +55,10 @@ exports = module.exports = (function(){
      */
     const Deck = function(cardIdsToOmit = []){
 
-        // console.log("Generating new deck");
+        // Log("Generating new deck");
 
         if(cardIdsToOmit.length > 0){
-            // console.log("Omitting cards: " + cardIdsToOmit);
+            // Log("Omitting cards: " + cardIdsToOmit);
         }
 
         this._allCards = [];
@@ -72,10 +73,10 @@ exports = module.exports = (function(){
                 this._allCards.push(card);
             }
         }
-        // console.log("Generating " + this._allCards.length + " cards");
+        // Log("Generating " + this._allCards.length + " cards");
 
         this._deckObj = new CardDeck();
-        // console.log("Deck created");
+        // Log("Deck created");
 
         Object.freeze();
     };
@@ -84,11 +85,11 @@ exports = module.exports = (function(){
      * Reshuffles this deck
      */
     Deck.prototype.Reshuffle = function(){
-        // console.log("Refilling deck with " + this._allCards.length + " cards");
+        // Log("Refilling deck with " + this._allCards.length + " cards");
         // Need to use "map" because the deck removes cards from the array
         this._deckObj.cards(this._allCards.map(x => x));
-        // console.log("Cards remaining: " + this._deckObj.remaining());
-        // console.log("Shuffling deck");
+        // Log("Cards remaining: " + this._deckObj.remaining());
+        // Log("Shuffling deck");
         this._deckObj.shuffle();
     };
 
@@ -96,12 +97,12 @@ exports = module.exports = (function(){
      * Draws a card from the deck
      */
     Deck.prototype.Draw = function(){
-        // console.log("Drawing a card from the deck");
+        // Log("Drawing a card from the deck");
         let drawnCard = this._deckObj.draw();
         if(!drawnCard){
             throw new Error(`Drew ${drawnCard} card!`);
         }
-        // console.log("Cards remaining: " + this._deckObj.remaining());
+        // Log("Cards remaining: " + this._deckObj.remaining());
         return drawnCard
     };
 

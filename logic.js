@@ -1,12 +1,13 @@
 exports = module.exports = (function(){
     const CONFIG = require("./config.json");
+    const Log = require("./logs.js");
 
     // This will be our base value for betting
     const BLIND = CONFIG.betting.bigBlind;
 
     const Logic = function(){
 
-        console.log("Initializing Logic...");
+        Log("Initializing Logic...");
 
         // Contains arrays of values
         // Indices are how much to multiply the blind by
@@ -50,6 +51,9 @@ exports = module.exports = (function(){
                 break;
         }
 
+        // Log(logicSet);
+        // Log(winProbability);
+
         // Goes down the list of 
         for(let mult = logicSet.length-1; mult >= 0; --mult){
             // We get the min percentage at which to bet with this multiplier
@@ -57,11 +61,13 @@ exports = module.exports = (function(){
 
             // If our current percentage is higher than the min
             if(winProbability >= percvalue){
+                // Log(percvalue + " matches");
                 // We calculate our bet
                 let bet = BLIND * mult;
                 // Then we return it
                 return bet;
             }
+            // Log(percvalue + " doesn't match");
         }
 
         // If none of them were valid, we return 0
@@ -82,19 +88,19 @@ exports = module.exports = (function(){
             let set = this.bettingLikelihood[key];
 
             // Resets the set
-            set = [];
+            set.length = 0;
 
             // We put a zero in the zero spot
             set.push(0);
 
             // let values = [];
             for(let n = 0; n < MAX_MULT; ++n)
-            set.push(Math.random());
+                set.push(Math.random());
 
             set.sort((a,b) => { return a-b; })
 
-            console.log(key + ":");
-            console.log(set);
+            Log(key + ":");
+            Log(set);
         }
     };
 

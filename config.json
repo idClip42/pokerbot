@@ -9,5 +9,8 @@
     },
     "logic" : {
         "evalIterations" : 1000
+    },
+    "logging" : {
+        "enabled" : true
     }
 }
