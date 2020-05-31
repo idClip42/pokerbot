@@ -258,7 +258,6 @@ exports = module.exports = (function(){
 
         CheckPot.call(this);
         CheckCurrentBalances.call(this);
-        CheckTotalMoney.call(this);
 
         let bustedOut = [];
         // console.log("\nCurrent Balances:");
@@ -276,6 +275,8 @@ exports = module.exports = (function(){
             console.log(`${player.toString()} has BUSTED OUT!`);
             this._players.splice(this._players.indexOf(player), 1);
         }
+
+        CheckTotalMoney.call(this);
 
         // console.log("Remaining Players:");
         // for(let player of this._players){
@@ -422,7 +423,7 @@ exports = module.exports = (function(){
 
             // Removes previously rewarded money from this sum
             // So that we aren't making money out of thin air
-            // pot -= amountTakenFromPot;
+            pot -= amountTakenFromPot;
             // console.log(`Remaining pot: $${pot}`);
 
             // Setting player as an array
