@@ -17,6 +17,9 @@ exports = module.exports = (function(){
     const Deck = require("./deck.js");
     const CONFIG = require("./config.json");
 
+    // Used for checking approximate equality
+    const EPSILON = 0.001;
+
     /**
      * 
      * INITIALIZATION
@@ -299,9 +302,6 @@ exports = module.exports = (function(){
     };
 
     const CheckTotalMoney = function(){
-        // Used for checking approximate equality
-        const EPSILON = 0.001;
-
         // Check if the money everyone has still adds up!
         // Starts at 0
         let totalMoney = 0;
@@ -359,7 +359,7 @@ exports = module.exports = (function(){
                 // let loopLength = this._players.length;
             }
 
-            if(bet < this._currentBet && !currentPlayer.IsAllIn() && !currentPlayer.HasFolded()){
+            if(bet + EPSILON < this._currentBet && !currentPlayer.IsAllIn() && !currentPlayer.HasFolded()){
                 throw new Error(`${currentPlayer.toString()} only bet $${bet} when the bet was $${this._currentBet} and their funds were $${currentPlayer.Funds()}`);
             }
         }
