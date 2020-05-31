@@ -67,6 +67,7 @@ exports = module.exports = (function(){
         // If none of them were valid, we return 0
         // Ideally, the 0 spot on each array should be 0, so we never get here
         // But that's a dumb requirement
+        throw new Error("This is bad");
         return 0;
     };
 
@@ -83,14 +84,14 @@ exports = module.exports = (function(){
             // We put a zero in the zero spot
             set.push(0);
 
-            let values = [];
+            // let values = [];
             for(let n = 0; n < MAX_MULT; ++n)
-                values.push(Math.random());
+            set.push(Math.random());
 
-            values.sort((a,b) => { return a-b; })
+            set.sort((a,b) => { return a-b; })
 
             console.log(key + ":");
-            console.log(values);
+            console.log(set);
         }
     };
 
