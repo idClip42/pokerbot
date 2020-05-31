@@ -358,6 +358,10 @@ exports = module.exports = (function(){
                 // // In the case where we were going to let 
                 // let loopLength = this._players.length;
             }
+
+            if(bet < this._currentBet && !currentPlayer.IsAllIn() && !currentPlayer.HasFolded()){
+                throw new Error(`${currentPlayer.toString()} only bet $${bet} when the bet was $${this._currentBet} and their funds were $${currentPlayer.Funds()}`);
+            }
         }
 
         // Lets everyone know about everyone's bets
