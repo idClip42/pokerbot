@@ -8,7 +8,9 @@
         "holeCards" : 2
     },
     "logic" : {
-        "evalIterations" : 1000
+        "evalIterations" : 1000,
+        "multOptions" : 5,
+        "discretePercOptions" : 20
     },
     "logging" : {
         "enabled" : false

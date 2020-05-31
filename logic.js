@@ -80,7 +80,8 @@ exports = module.exports = (function(){
     Logic.prototype.SetRandomLogic = function(){
 
         // How many multiples we want of the big blind
-        const MAX_MULT = 5;
+        const MAX_MULT = CONFIG.logic.multOptions;
+        const PERC_OPTIONS = CONFIG.logic.discretePercOptions;
 
         // Goes thru each condition/table state/card count
         for(let key in this.bettingLikelihood){
@@ -94,8 +95,11 @@ exports = module.exports = (function(){
             set.push(0);
 
             // let values = [];
-            for(let n = 0; n < MAX_MULT; ++n)
-                set.push(Math.random());
+            for(let n = 0; n < MAX_MULT; ++n){
+                let value = Math.round(PERC_OPTIONS * Math.random());
+                value = value / PERC_OPTIONS;
+                set.push(value);
+            }
 
             set.sort((a,b) => { return a-b; })
 
