@@ -22,6 +22,7 @@ const PLAYER_NAMES = [
 
 const record = new Record();
 record.Load();
+record.EvaluateBestStrategy();
 
 while(true){
 
@@ -74,6 +75,8 @@ while(true){
         let won = (player === game.Players()[0]);
         record.AddPlayerLogicResults(logic, playerCount, won);
     }
+
+    record.EvaluateBestStrategy();
 
     record.Save();
 }

@@ -50,7 +50,7 @@ exports = module.exports = (function(){
         let dataObj = JSON.parse(dataString);
 
         Object.assign(this, dataObj);
-        console.log(this);
+        // console.log(this);
     };
 
     Record.prototype.Save = function(){
@@ -103,6 +103,43 @@ exports = module.exports = (function(){
             }
         }
 
+    };
+
+    Record.prototype.EvaluateBestStrategy = function(){
+        // return;
+        console.log("Best Strategy found thus far:");
+
+        for(let playerCount in this.playerCounts){
+            console.log(" • " + playerCount + " Players");
+
+            for(let cardCount in this.playerCounts[playerCount]){
+                console.log("    • " + cardCount);
+
+                let probSet = this.playerCounts[playerCount][cardCount];
+
+                console.log("       • You should multiply the blinds by:");
+
+                let maxPerc = -1;
+                let bestStat = undefined;
+                for(let mult in probSet){
+                    let statSet = probSet[mult];
+                    // console.log(statSet);
+                    console.log("        • " + mult + "x");
+                    for(let winStat in statSet){
+                        let winPerc = statSet[winStat].winPercentage
+                        if(winPerc > maxPerc){
+                            maxPerc = winPerc;
+                            bestStat = statSet[winStat];
+                        }
+                    }
+                    if(!bestStat) throw new Error("What up here?");
+                    // console.log(bestStat);
+                    console.log("          • When you have " + (bestStat.choiceLikelihood * 100) + "% chance of winning");
+                    console.log("          • Wins games " + Math.round(bestStat.winPercentage * 100) + "% of the time");
+                    console.log(`          • ${bestStat.wins} wins, ${bestStat.losses} losses`);
+                }
+            }
+        }
     };
 
     return Record;
