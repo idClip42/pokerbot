@@ -48,6 +48,7 @@ exports = module.exports = (function(){
     Game.prototype.CurrentBet = function(){ return this._currentBet; };
     Game.prototype.CommunityCards = function(){ return this._communityCards; };
     Game.prototype.Players = function() { return this._players.map(x => x); };
+    Game.prototype.HandsPlayed = function() { return this._handsPlayed; }:
 
     /**
      * 
