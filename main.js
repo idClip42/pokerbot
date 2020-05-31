@@ -5,7 +5,7 @@ const Player = require("./player.js");
 const CONFIG = require("./config.json");
 
 const bigIntNsMs = BigInt(1e+6);
-const bigIntMsS = BigInt(1000);
+// const bigIntMsS = BigInt(1000);
 
 // for(let n = 0; n < 5; ++n)
 //     console.log("---------------------------------------------------------------------------------------------------------------");
@@ -27,6 +27,8 @@ for(let name of PLAYER_NAMES){
     ));
 }
 
+console.log("Starting new game...");
+
 const game = new Game();
 for(let player of players)
     game.PlayerAdd(player);
@@ -45,13 +47,16 @@ console.log(`Winner: ${game.Players()[0].toString()}`);
 let endBigInt = process.hrtime.bigint();
 let msSpan = (function(){
     let ns = endBigInt - startBigInt;
-    return (ns / bigIntNsMs);
+    return Number(ns / bigIntNsMs);
 })();
 console.log(`Game took ${msSpan}ms`);
+const seconds = Math.round(msSpan / 1000);
+console.log(`Game took ${seconds}s`);
+// const minutes = seconds / 60;
+// console.log(`Game took ${minutes} min`);
 
 const handsPlayed = game.HandsPlayed();
 console.log("Hands played: " + handsPlayed);
 
-const seconds = msSpan / bigIntMsS;
-const handsPerSecond = handsPlayed / Number(seconds);
+const handsPerSecond = Math.round(handsPlayed / seconds);
 console.log("Hands per second: " + handsPerSecond);
