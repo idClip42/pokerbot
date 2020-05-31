@@ -145,13 +145,19 @@ exports = module.exports = (function(){
         // Lowers it to our max funds if needed
         let realBet = Math.min(idealBet, this._funds);
 
+        console.log(`${this._uid}'s ideal bet is $${realBet}, and the current bet is $${game.CurrentBet()}`);
+
         // If the current bet is higher than what we want to bet
         if(realBet < game.CurrentBet()){
+
+            // If there's more in the game bet than we have bet so far
+            // We are folding
+            if(game.CurrentBet() > this._currentBet){
+                this._folded = true;
+                console.log(`${this._uid} folds`);
+            }
             // We want to bet nothing
             realBet = 0;
-            // And fold
-            this._folded = true;
-            console.log(`${this._uid} folds`);
         }
 
         // If our bet is equal to our funds
@@ -162,7 +168,7 @@ exports = module.exports = (function(){
         }
 
         // Sets our current bet officially
-        this._currentBet = realBet;
+        this._currentBet = Math.max(this._currentBet, realBet);
 
         console.log(`${this._uid} bets $${this._currentBet}`);
         return this._currentBet;
