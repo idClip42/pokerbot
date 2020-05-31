@@ -40,6 +40,8 @@ while(gameEnded === false){
 console.log("Game is over");
 game.End();
 
+console.log(`Winner: ${game.Players()[0].toString()}`);
+
 let endBigInt = process.hrtime.bigint();
 let msSpan = (function(){
     let ns = endBigInt - startBigInt;
