@@ -36,6 +36,7 @@ exports = module.exports = (function(){
     Player.prototype.Hand = function(){ return this._hand; };
     Player.prototype.Funds = function(){ return this._funds; };
     Player.prototype.MaxEligiblePot = function(){ return this._maxEligiblePot; };
+    Player.prototype.Logic = function(){ return this._logic; };
 
     /**
      * Gives the player some money

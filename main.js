@@ -3,6 +3,7 @@
 const Game = require("./game.js");
 const Player = require("./player.js");
 const CONFIG = require("./config.json");
+const Record = require("./record.js");
 
 const bigIntNsMs = BigInt(1e+6);
 // const bigIntMsS = BigInt(1000);
@@ -18,6 +19,9 @@ const PLAYER_NAMES = [
     "Dirk",
     "Eve"
 ];
+
+const record = new Record();
+record.Load();
 
 while(true){
 
@@ -44,6 +48,7 @@ while(true){
     console.log("Game is over");
     game.End();
 
+    if(game.Players().length !== 1) throw new Error(`At end of game, player count is ${game.Players().length}`);
     console.log(`Winner: ${game.Players()[0].toString()}`);
 
     let endBigInt = process.hrtime.bigint();
@@ -63,4 +68,12 @@ while(true){
     let handsPerSecond = Math.round(handsPlayed / seconds);
     console.log("Hands per second: " + handsPerSecond);
 
+    for(let player of players){
+        let logic = player.Logic();
+        let playerCount = players.length;
+        let won = (player === game.Players()[0]);
+        record.AddPlayerLogicResults(logic, playerCount, won);
+    }
+
+    record.Save();
 }
