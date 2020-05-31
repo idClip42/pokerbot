@@ -81,6 +81,9 @@ exports = module.exports = (function(){
 
             let set = this.bettingLikelihood[key];
 
+            // Resets the set
+            set = [];
+
             // We put a zero in the zero spot
             set.push(0);
 
