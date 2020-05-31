@@ -116,6 +116,7 @@ exports = module.exports = (function(){
 
         console.log("\nDealing Hole Cards:");
         for(let player of this._players){
+            player.NewHand();
             player.RemoveHand();
             let newHand = [];
             for(let n = 0; n < CONFIG.hand.holeCards; ++n)
@@ -183,7 +184,11 @@ exports = module.exports = (function(){
         for(let player of this._players){
             this._pot += player.SubmitCurrentBet();
         }
-        console.log(`Current pot: $${this._pot}`);
+        // console.log(`Current pot: $${this._pot}`);
+
+        CheckTotalMoney.call(this);
+        CheckPot.call(this);
+        CheckCurrentBalances.call(this);
 
 
         console.log("\nDealing the flop...");
@@ -203,7 +208,11 @@ exports = module.exports = (function(){
         for(let player of this._players){
             this._pot += player.SubmitCurrentBet();
         }
-        console.log(`Current pot: $${this._pot}`);
+        // console.log(`Current pot: $${this._pot}`);
+
+        CheckTotalMoney.call(this);
+        CheckPot.call(this);
+        CheckCurrentBalances.call(this);
 
         console.log("\nDealing the turn...");
         this._communityCards.push(this._cardDeck.Draw());
@@ -220,7 +229,11 @@ exports = module.exports = (function(){
         for(let player of this._players){
             this._pot += player.SubmitCurrentBet();
         }
-        console.log(`Current pot: $${this._pot}`);
+        // console.log(`Current pot: $${this._pot}`);
+
+        CheckTotalMoney.call(this);
+        CheckPot.call(this);
+        CheckCurrentBalances.call(this);
 
         console.log("\nDealing the river...");
         this._communityCards.push(this._cardDeck.Draw());
@@ -237,7 +250,9 @@ exports = module.exports = (function(){
         for(let player of this._players){
             this._pot += player.SubmitCurrentBet();
         }
-        console.log(`Current pot: $${this._pot}`);
+        CheckTotalMoney.call(this);
+        CheckPot.call(this);
+        CheckCurrentBalances.call(this);
         
         DistributeWinnings(this._players, this._communityCards, this._pot);
 
@@ -245,9 +260,9 @@ exports = module.exports = (function(){
         this._pot = 0;
 
         let bustedOut = [];
-        console.log("\nCurrent Balances:");
+        // console.log("\nCurrent Balances:");
         for(let player of this._players){
-            console.log(` - ${player.toString()}:\t$${player.Funds()}`);
+            // console.log(` - ${player.toString()}:`.padEnd(20) + `$${player.Funds()}`);
             if(player.Funds() <= 0){
                 bustedOut.push(player);
             }
@@ -271,15 +286,32 @@ exports = module.exports = (function(){
             return true;
         }
 
+        CheckTotalMoney.call(this);
+        CheckCurrentBalances.call(this);
+
+        return false;
+    };
+
+    const CheckTotalMoney = function(){
         // Check if the money everyone has still adds up!
         let totalMoney = 0;
+        totalMoney += this._pot;
         for(let player of this._players)
             totalMoney += player.Funds();
         if(totalMoney !== this._totalMoney){
             throw new Error(`$${totalMoney - this._totalMoney} extra dollars at the table! (Hand ${this._handsPlayed})`);
         }
+    };
 
-        return false;
+    const CheckCurrentBalances = function(){
+        console.log("\nCurrent Balances:");
+        for(let player of this._players){
+            console.log(` - ${player.toString()}:`.padEnd(20) + `$${player.Funds()}`);
+        }
+    };
+
+    const CheckPot = function(){
+        console.log("\nCurrent Pot:".padEnd(20) + `$${this._pot}`);
     };
 
     const BettingRound = function(startPlayerIndex /*, isBlinds = false*/ ){

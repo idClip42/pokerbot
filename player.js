@@ -73,6 +73,7 @@ exports = module.exports = (function(){
         this._folded = false;
         this._allIn = false;
         this._totalHandBet = 0;
+        this._maxEligiblePot = 0;
         // console.log(`${this._uid} is starting a new hand`);
     };
 
@@ -136,6 +137,7 @@ exports = module.exports = (function(){
             console.log(`This guy, ${this._uid}, is the big blind man, so he's going to arbitrarily raise for now`);
             this._currentBet = Math.min(game.CurrentBet() * 2, this._funds);
         } else {
+            console.log(`${this._uid} calls arbitrarily`);
             this._currentBet = Math.min(game.CurrentBet(), this._funds);
         }
         console.log(`${this._uid} bets $${this._currentBet}`);
