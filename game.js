@@ -362,7 +362,10 @@ exports = module.exports = (function(){
             // If they bet less than the bet
             if(bet + EPSILON < this._currentBet && 
                 // But also less than their current funds
-                bet + EPSILON < currentPlayer.Funds()){
+                bet + EPSILON < currentPlayer.Funds() &&
+                // And they haven't folded
+                !currentPlayer.HasFolded()
+                ){
                 // That's not valid betting
                 throw new Error(`${currentPlayer.toString()} only bet $${bet} when the bet was $${this._currentBet} and their funds were $${currentPlayer.Funds()}`);
             }

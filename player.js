@@ -3,6 +3,7 @@
 exports = module.exports = (function(){
 
     const EvaluateWinProbability = require("./winProbability.js");
+    const Logic = require("./logic.js");
 
     /**
      * A new player
@@ -20,6 +21,9 @@ exports = module.exports = (function(){
         this._folded = false;
         this._allIn = false;
         this._maxEligiblePot = 0;
+
+        this._logic = new Logic();
+        this._logic.SetRandomLogic();
 
         Object.seal(this);
     };
@@ -108,14 +112,14 @@ exports = module.exports = (function(){
         // console.log(`${this._uid}'s turn to bet`);
         if(this._folded === true) {
             console.log(`${this._uid} already folded`);
-            return;
+            return this._currentBet;
         }
         if(this._funds === 0) {
             this._allIn = true;
         }
         if(this._allIn === true) {
             console.log(`${this._uid} is already all in`);
-            return;
+            return this._currentBet;
         }
 
         let activePlayerCount = 0;
@@ -124,6 +128,7 @@ exports = module.exports = (function(){
             activePlayerCount++;
         }
         
+        // Gets our win likelihood
         console.log(`\n${this._uid} evaluating likelihood of victory:`);
         let winPerc = EvaluateWinProbability(
             this._hand,
@@ -131,15 +136,34 @@ exports = module.exports = (function(){
             activePlayerCount
         );
 
-        // console.log(`${this._uid} is betting...`);
+        // Gets our ideal bet that we would want with this hand
+        let idealBet = this._logic.HowMuchShouldIBet(
+            game.CommunityCards().length,
+            winPerc
+        );
 
-        if(this._currentBet === game.CurrentBet() && this._currentBet !== 0){
-            console.log(`This guy, ${this._uid}, is the big blind man, so he's going to arbitrarily raise for now`);
-            this._currentBet = Math.min(game.CurrentBet() * 2, this._funds);
-        } else {
-            console.log(`${this._uid} calls arbitrarily`);
-            this._currentBet = Math.min(game.CurrentBet(), this._funds);
+        // Lowers it to our max funds if needed
+        let realBet = Math.min(idealBet, this._funds);
+
+        // If the current bet is higher than what we want to bet
+        if(realBet < game.CurrentBet()){
+            // We want to bet nothing
+            realBet = 0;
+            // And fold
+            this._folded = true;
+            console.log(`${this._uid} folds`);
         }
+
+        // If our bet is equal to our funds
+        // We're going all in
+        if(realBet === this._funds){
+            this._allIn = true;
+            console.log(`${this._uid} goes all-in`);
+        }
+
+        // Sets our current bet officially
+        this._currentBet = realBet;
+
         console.log(`${this._uid} bets $${this._currentBet}`);
         return this._currentBet;
     };
