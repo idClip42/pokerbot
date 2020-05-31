@@ -186,9 +186,9 @@ exports = module.exports = (function(){
         }
         // console.log(`Current pot: $${this._pot}`);
 
-        CheckTotalMoney.call(this);
         CheckPot.call(this);
         CheckCurrentBalances.call(this);
+        CheckTotalMoney.call(this);
 
 
         console.log("\nDealing the flop...");
@@ -210,9 +210,9 @@ exports = module.exports = (function(){
         }
         // console.log(`Current pot: $${this._pot}`);
 
-        CheckTotalMoney.call(this);
         CheckPot.call(this);
         CheckCurrentBalances.call(this);
+        CheckTotalMoney.call(this);
 
         console.log("\nDealing the turn...");
         this._communityCards.push(this._cardDeck.Draw());
@@ -231,9 +231,9 @@ exports = module.exports = (function(){
         }
         // console.log(`Current pot: $${this._pot}`);
 
-        CheckTotalMoney.call(this);
         CheckPot.call(this);
         CheckCurrentBalances.call(this);
+        CheckTotalMoney.call(this);
 
         console.log("\nDealing the river...");
         this._communityCards.push(this._cardDeck.Draw());
@@ -250,25 +250,29 @@ exports = module.exports = (function(){
         for(let player of this._players){
             this._pot += player.SubmitCurrentBet();
         }
-        CheckTotalMoney.call(this);
-        CheckPot.call(this);
-        CheckCurrentBalances.call(this);
         
         DistributeWinnings(this._players, this._communityCards, this._pot);
 
         // console.log("Emptying pot");
         this._pot = 0;
 
+        CheckPot.call(this);
+        CheckCurrentBalances.call(this);
+        CheckTotalMoney.call(this);
+
         let bustedOut = [];
         // console.log("\nCurrent Balances:");
         for(let player of this._players){
             // console.log(` - ${player.toString()}:`.padEnd(20) + `$${player.Funds()}`);
-            if(player.Funds() <= 0){
+            if(player.Funds() === 0){
                 bustedOut.push(player);
+            }
+            else if(player.Funds() < 0){
+                throw new Error(`${player.toString()} has $${player.Funds()}!`);
             }
         }
 
-        for(let player in bustedOut){
+        for(let player of bustedOut){
             console.log(`${player.toString()} has BUSTED OUT!`);
             this._players.splice(this._players.indexOf(player), 1);
         }
@@ -286,8 +290,8 @@ exports = module.exports = (function(){
             return true;
         }
 
-        CheckTotalMoney.call(this);
-        CheckCurrentBalances.call(this);
+        // CheckTotalMoney.call(this);
+        // CheckCurrentBalances.call(this);
 
         return false;
     };
@@ -392,23 +396,23 @@ exports = module.exports = (function(){
         // Goes through each pot
         for(let pot of potAmounts){
             
-            console.log(`\nFinding winner for $${pot} pot`);
+            console.log(`\nFinding winner for $${pot - amountTakenFromPot} pot`);
 
             // Only allows eligible players to partake in the pot
             let eligiblePlayers = [];
             for(let player of allPlayers){
                 if(player.MaxEligiblePot() >= pot){
-                    console.log(` - ${player.toString()} ($${player.MaxEligiblePot()} max) is eligible`);
+                    // console.log(` - ${player.toString()} ($${player.MaxEligiblePot()} max) is eligible`);
                     eligiblePlayers.push(player);
                 } else {
-                    console.log(` - ${player.toString()} ($${player.MaxEligiblePot()} max) is NOT eligible`);
+                    // console.log(` - ${player.toString()} ($${player.MaxEligiblePot()} max) is NOT eligible`);
                 }
             }
 
             // Removes previously rewarded money from this sum
             // So that we aren't making money out of thin air
-            pot -= amountTakenFromPot;
-            console.log(`Remaining pot: $${pot}`);
+            // pot -= amountTakenFromPot;
+            // console.log(`Remaining pot: $${pot}`);
 
             // Setting player as an array
             // because there may be more than one with the same hand
