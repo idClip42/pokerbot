@@ -19,44 +19,48 @@ const PLAYER_NAMES = [
     "Eve"
 ];
 
-const players = [];
-for(let name of PLAYER_NAMES){
-    players.push(new Player(
-        name,
-        CONFIG.betting.buyIn
-    ));
+while(true){
+
+    console.log("\nStarting new game...");
+
+    let players = [];
+    for(let name of PLAYER_NAMES){
+        players.push(new Player(
+            name,
+            CONFIG.betting.buyIn
+        ));
+    }
+
+    let game = new Game();
+    for(let player of players)
+        game.PlayerAdd(player);
+
+    let startBigInt = process.hrtime.bigint();
+
+    let gameEnded = false;
+    while(gameEnded === false){
+        gameEnded = game.NewHand();
+    }
+    console.log("Game is over");
+    game.End();
+
+    console.log(`Winner: ${game.Players()[0].toString()}`);
+
+    let endBigInt = process.hrtime.bigint();
+    let msSpan = (function(){
+        let ns = endBigInt - startBigInt;
+        return Number(ns / bigIntNsMs);
+    })();
+    console.log(`Game took ${msSpan}ms`);
+    let seconds = Math.round(msSpan / 1000);
+    console.log(`Game took ${seconds}s`);
+    // const minutes = seconds / 60;
+    // console.log(`Game took ${minutes} min`);
+
+    let handsPlayed = game.HandsPlayed();
+    console.log("Hands played: " + handsPlayed);
+
+    let handsPerSecond = Math.round(handsPlayed / seconds);
+    console.log("Hands per second: " + handsPerSecond);
+
 }
-
-console.log("Starting new game...");
-
-const game = new Game();
-for(let player of players)
-    game.PlayerAdd(player);
-
-let startBigInt = process.hrtime.bigint();
-
-let gameEnded = false;
-while(gameEnded === false){
-    gameEnded = game.NewHand();
-}
-console.log("Game is over");
-game.End();
-
-console.log(`Winner: ${game.Players()[0].toString()}`);
-
-let endBigInt = process.hrtime.bigint();
-let msSpan = (function(){
-    let ns = endBigInt - startBigInt;
-    return Number(ns / bigIntNsMs);
-})();
-console.log(`Game took ${msSpan}ms`);
-const seconds = Math.round(msSpan / 1000);
-console.log(`Game took ${seconds}s`);
-// const minutes = seconds / 60;
-// console.log(`Game took ${minutes} min`);
-
-const handsPlayed = game.HandsPlayed();
-console.log("Hands played: " + handsPlayed);
-
-const handsPerSecond = Math.round(handsPlayed / seconds);
-console.log("Hands per second: " + handsPerSecond);
