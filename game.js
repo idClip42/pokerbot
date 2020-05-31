@@ -443,7 +443,7 @@ exports = module.exports = (function(){
             let winningPlayers = [];
             let winningValue = 0;
             let winningHand = "";
-            for(let player of allPlayers){
+            for(let player of eligiblePlayers){
                 let evaluation = EvalHand(
                     player.Hand(),
                     communityCards
