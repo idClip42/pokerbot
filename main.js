@@ -7,8 +7,9 @@ const CONFIG = require("./config.json");
 const bigIntNsMs = BigInt(1e+6);
 const bigIntMsS = BigInt(1000);
 
-for(let n = 0; n < 5; ++n)
-    console.log("---------------------------------------------------------------------------------------------------------------");
+// for(let n = 0; n < 5; ++n)
+//     console.log("---------------------------------------------------------------------------------------------------------------");
+console.log("STARTING POKER RUN");
 
 const PLAYER_NAMES = [
     "Arty",
@@ -37,6 +38,7 @@ while(gameEnded === false){
     gameEnded = game.NewHand();
 }
 console.log("Game is over");
+game.End();
 
 let endBigInt = process.hrtime.bigint();
 let msSpan = (function(){

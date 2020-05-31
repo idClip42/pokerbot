@@ -302,6 +302,10 @@ exports = module.exports = (function(){
         return false;
     };
 
+    Game.prototype.End = function(){
+       
+    };
+
     const CheckTotalMoney = function(){
         // Check if the money everyone has still adds up!
         // Starts at 0
