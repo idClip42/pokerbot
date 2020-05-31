@@ -11,6 +11,6 @@
         "evalIterations" : 1000
     },
     "logging" : {
-        "enabled" : true
+        "enabled" : false
     }
 }
