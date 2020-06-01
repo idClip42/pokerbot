@@ -12,6 +12,7 @@
   "dependencies": {
     "card-deck": "^1.0.1",
     "chalk": "^4.0.0",
-    "poker-evaluator-ts": "^1.1.3"
+    "poker-evaluator-ts": "^1.1.3",
+    "stats-lite": "^2.2.0"
   }
 }

@@ -3,7 +3,9 @@ exports = module.exports = (function(){
     const fs = require("fs");
     const path = require("path");
 
-    const FILENAME = "statsRecord.json";
+    const stats = require("stats-lite");
+
+    const FILENAME = "statsRecord_0.02.json";
     const PATH = path.join(__dirname, FILENAME)
 
     const MultiplierPercRecord = function(perc){
@@ -12,6 +14,7 @@ exports = module.exports = (function(){
         this.wins = 0;
         this.losses = 0;
         this.winPercentage = 0;
+        this.winTimes = [];
         Object.seal(this);
     };
 
@@ -68,7 +71,7 @@ exports = module.exports = (function(){
      * @param {number} playerCount How many players in the game
      * @param {boolean} didWin Whether this player won
      */
-    Record.prototype.AddPlayerLogicResults = function(logic, playerCount, didWin ){
+    Record.prototype.AddPlayerLogicResults = function(logic, playerCount, didWin, gameTime){
         
         if(!this.playerCounts.hasOwnProperty(playerCount))
             this.playerCounts[playerCount] = new TableState();
@@ -96,8 +99,13 @@ exports = module.exports = (function(){
 
                 let thisRecord = percToDataObj[percentage];
                 thisRecord.games++;
-                if(didWin) thisRecord.wins++;
-                else thisRecord.losses++;
+                if(didWin) {
+                    thisRecord.wins++;
+                    thisRecord.winTimes.push(gameTime);
+                }
+                else {
+                    thisRecord.losses++;
+                }
                 thisRecord.winPercentage = thisRecord.wins / thisRecord.games;
 
             }
@@ -137,6 +145,12 @@ exports = module.exports = (function(){
                     console.log("          • When you have " + (bestStat.choiceLikelihood * 100) + "% chance of winning");
                     console.log("          • Wins games " + Math.round(bestStat.winPercentage * 100) + "% of the time");
                     console.log(`          • ${bestStat.wins} wins, ${bestStat.losses} losses`);
+                    console.log(`          • Time:`);
+                    console.log(`            • Mean: ${stats.mean(bestStat.winTimes)}ms`);
+                    console.log(`            • Median: ${stats.median(bestStat.winTimes)}ms`);
+                    console.log(`            • Mode: ${stats.mode(bestStat.winTimes)}ms`);
+                    console.log(`            • Min: ${Math.min(...bestStat.winTimes)}ms`);
+                    console.log(`            • Max: ${Math.max(...bestStat.winTimes)}ms`);
                 }
             }
         }

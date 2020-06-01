@@ -76,7 +76,8 @@ while(true){
         let logic = player.Logic();
         let playerCount = players.length;
         let won = (player === game.Players()[0]);
-        record.AddPlayerLogicResults(logic, playerCount, won);
+        let gametime = msSpan;
+        record.AddPlayerLogicResults(logic, playerCount, won, gametime);
     }
 
     if(CONFIG.logging.logEval === true){
