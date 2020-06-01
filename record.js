@@ -148,7 +148,7 @@ exports = module.exports = (function(){
                     console.log(`          • Time:`);
                     console.log(`            • Mean: ${stats.mean(bestStat.winTimes)}ms`);
                     console.log(`            • Median: ${stats.median(bestStat.winTimes)}ms`);
-                    console.log(`            • Mode: ${stats.mode(bestStat.winTimes)}ms`);
+                    // console.log(`            • Mode: ${stats.mode(bestStat.winTimes)}ms`);
                     console.log(`            • Min: ${Math.min(...bestStat.winTimes)}ms`);
                     console.log(`            • Max: ${Math.max(...bestStat.winTimes)}ms`);
                 }
